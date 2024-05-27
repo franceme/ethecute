@@ -57,7 +57,7 @@ public isolated client class Vessel {
             "failure": ()
         };
 
-        string content = [];
+        string[] content = [];
 
         foreach CMD command in self.history {
             content.push("");
