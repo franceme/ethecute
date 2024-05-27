@@ -123,6 +123,11 @@ public isolated client class Vessel {
         return self.exe();
     }
 
+    //https://ballerina.io/learn/build-a-data-service-in-ballerina/#create-the-resource-methods
+    resource isolated function put .(string additionalcmd) {
+        self.addCmd(additionalcmd);
+    }
+
     resource isolated function post .(string additionalcmd) returns ExeOut {
         self.addCmd(additionalcmd);
         return self.exe();
