@@ -98,8 +98,8 @@ public isolated client class Vessel {
             byte[]|error failure = process.output(io:stderr);
             int|error exitCode = process.waitForExit();
 
-            output.success = success is error ? () : string:fromBytes(success);
-            output.failure = failure is error ? () : string:fromBytes(failure);
+            output.success = success is error ? () : (string:fromBytes(success) is error ? () : string:fromBytes(success));
+            output.failure = failure is error ? () : (string:fromBytes(failure) is error ? () : string:fromBytes(failure));
             output.output = output.success ?: output.failure ?: "";
             output.exitCode = exitCode is error ? -1 : exitCode;
         }
