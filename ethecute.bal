@@ -47,7 +47,7 @@ public isolated client class Vessel {
         }
     }
 
-    resource isolated function exe() returns ExeOut {
+    public function exe() returns ExeOut {
         ExeOut output = {
             "exitCode": -1,
             "output": "",
