@@ -7,7 +7,7 @@ import ballerina/time;
 
 type CMD record {|
     string cmd;
-    time:UTC addedat;
+    time:Utc addedat;
 |};
 
 public type ExeOut record {|
@@ -19,7 +19,7 @@ public type ExeOut record {|
     string? failure;
 |};
 
-class Vessel {
+public isolated client class Vessel {
 
     string executor;
     CMD[] history;
