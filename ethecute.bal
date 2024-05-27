@@ -5,7 +5,7 @@ import ballerina/io;
 import ballerina/os;
 import ballerina/time;
 
-type CMD record {|
+public type CMD record {|
     string cmd;
     time:Utc addedat;
 |};
@@ -33,13 +33,13 @@ public isolated client class Vessel {
         self.filename = filename;
     }
 
-    private isolated function fileExists(string filePath) returns boolean {
+    public isolated function fileExists(string filePath) returns boolean {
         boolean|error result = file:test(filePath, file:EXISTS);
         return result is error ? false : result;
     }
 
 
-    private isolated function rmIfExists(string filePath) {
+    public isolated function rmIfExists(string filePath) {
         boolean|error response = file:test(filePath, file:EXISTS);
         if !(response is error) && response {
             error? deleteResponse = file:remove(filePath);
