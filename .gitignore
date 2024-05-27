@@ -21,3 +21,4 @@ machineid
 languagepacks.json
 
 .pytest_cache/
+vs_startup.sh

@@ -21,23 +21,25 @@ public type ExeOut record {|
 
 public isolated client class Vessel {
 
-    string executor;
-    CMD[] history;
-    string comment;
-    string filename;
+    private final string executor;
+    private final CMD[] history;
+    private final string comment;
+    private final string filename;
 
-    function init(string executionpath="python3", string filename="bal_temp_file.py", string comment="#") returns error? {
+    public isolated function init(string executionpath="python3", string filename="bal_temp_file.py", string comment="#") returns error? {
+        self.history = [];
         self.executor = executionpath;
         self.comment = comment;
         self.filename = filename;
     }
 
-    function fileExists(string filePath) returns boolean {
+    private isolated function fileExists(string filePath) returns boolean {
         boolean|error result = file:test(filePath, file:EXISTS);
         return result is error ? false : result;
     }
 
-    public function rmIfExists(string filePath) {
+
+    private isolated function rmIfExists(string filePath) {
         boolean|error response = file:test(filePath, file:EXISTS);
         if !(response is error) && response {
             error? deleteResponse = file:remove(filePath);
@@ -47,7 +49,7 @@ public isolated client class Vessel {
         }
     }
 
-    public function exe() returns ExeOut {
+    private isolated function exe() returns ExeOut {
         ExeOut output = {
             "exitCode": -1,
             "output": "",
@@ -57,18 +59,22 @@ public isolated client class Vessel {
             "failure": ()
         };
 
-        string[] content = [];
-
-        foreach CMD command in self.history {
-            content.push("");
-            content.push(self.comment + " " + time:utcToString(command.addedat));
-            content.push(command.cmd);
-            content.push("");
+        lock {
+            self.rmIfExists(self.filename);
         }
 
-        self.rmIfExists(self.filename);
-        io:Error? result = io:fileWriteLines(self.filename, content);
+        lock {
+            string[] content = [];
 
+            foreach CMD command in self.history {
+                content.push("");
+                content.push(self.comment + " " + time:utcToString(command.addedat));
+                content.push(command.cmd);
+                content.push("");
+            }
+
+            io:Error? result = io:fileWriteLines(self.filename, content);
+        }
 
         //https://ballerina.io/spec/os/
         output.exeStartUTC = time:utcToString(time:utcNow());
@@ -88,8 +94,9 @@ public isolated client class Vessel {
             output.output = output.success ?: output.failure ?: "";
             output.exitCode = exitCode is error ? -1 : exitCode;
         }
-        self.rmIfExists(self.filename);
-
+        lock {
+            self.rmIfExists(self.filename);
+        }
         return output;
     }
 
@@ -98,10 +105,12 @@ public isolated client class Vessel {
     }
 
     resource isolated function post .(string additionalcmd) returns ExeOut {
-        self.history.push({
-            cmd: additionalcmd,
-            addedat: time:utcNow()
-        });
+        lock {
+            self.history.push({
+                cmd: additionalcmd,
+                addedat: time:utcNow()
+            });
+        }
         return self.exe();
     }
 
