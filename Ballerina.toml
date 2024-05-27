@@ -1,0 +1,5 @@
+[package]
+org = "frantzme"
+name = "stringz"
+version = "0.0.2"
+distribution = "2201.7.1"
