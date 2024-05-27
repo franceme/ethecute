@@ -49,6 +49,15 @@ public isolated client class Vessel {
         }
     }
 
+    public isolated function addCmd(string additionalcmd) {
+        lock {
+            self.history.push({
+                cmd: additionalcmd,
+                addedat: time:utcNow()
+            });
+        }
+    }
+
     private isolated function exe() returns ExeOut {
         ExeOut output = {
             "exitCode": -1,
@@ -105,12 +114,7 @@ public isolated client class Vessel {
     }
 
     resource isolated function post .(string additionalcmd) returns ExeOut {
-        lock {
-            self.history.push({
-                cmd: additionalcmd,
-                addedat: time:utcNow()
-            });
-        }
+        self.addCmd(additionalcmd);
         return self.exe();
     }
 
