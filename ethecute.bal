@@ -71,9 +71,9 @@ public isolated client class Vessel {
 
 
         //https://ballerina.io/spec/os/
-        output.exeStart = time:utcToString(time:utcNow());
+        output.exeStartUTC = time:utcToString(time:utcNow());
         os:Process|os:Error process = os:exec({value: self.executor, arguments: [self.filename]});
-        output.exeEnd = time:utcToString(time:utcNow());
+        output.exeEndUTC = time:utcToString(time:utcNow());
 
         if process is error {
             output.output = process.message();
@@ -98,10 +98,10 @@ public isolated client class Vessel {
     }
 
     resource isolated function post .(string additionalcmd) returns ExeOut {
-        self.history.push(new CMD(
+        self.history.push({
             cmd: additionalcmd,
             addedat: time:utcNow()
-        ));
+        });
         return self.exe();
     }
 
