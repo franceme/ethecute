@@ -13,8 +13,8 @@ type CMD record {|
 public type ExeOut record {|
     int exitCode;
     string output;
-    string exeStartUTC;
-    string exeEndUTC;
+    string? exeStartUTC;
+    string? exeEndUTC;
     string? success;
     string? failure;
 |};
@@ -61,7 +61,7 @@ public isolated client class Vessel {
 
         foreach CMD command in self.history {
             content.push("");
-            content.push(`{self.comment} {time:utcToString(self.addedat)}`);
+            content.push(self.comment + " " + time:utcToString(self.addedat));
             content.push(command.cmd);
             content.push("");
         }
