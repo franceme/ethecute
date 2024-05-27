@@ -61,7 +61,7 @@ public isolated client class Vessel {
 
         foreach CMD command in self.history {
             content.push("");
-            content.push(self.comment + " " + time:utcToString(self.addedat));
+            content.push(self.comment + " " + time:utcToString(command.addedat));
             content.push(command.cmd);
             content.push("");
         }
